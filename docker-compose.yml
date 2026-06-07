@@ -1,0 +1,32 @@
+# 教培教务系统 Docker Compose 配置
+
+version: '3.8'
+
+services:
+  # 后端 API 服务
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: edu-system-api
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./data:/app/data
+      - ./api:/app/api
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - FRONTEND_URL=https://your-frontend-domain.com
+    restart: unless-stopped
+    networks:
+      - edu-network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/api/auth/dashboard"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  edu-network:
+    driver: bridge

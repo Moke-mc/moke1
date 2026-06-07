@@ -1,0 +1,30 @@
+# 教培教务系统后端Docker配置
+
+FROM node:18-alpine
+
+# 安装 PM2
+RUN npm install -g pm2
+
+# 设置工作目录
+WORKDIR /app
+
+# 复制 package 文件
+COPY package*.json ./
+
+# 安装依赖
+RUN npm ci --only=production
+
+# 复制 TypeScript 配置
+COPY tsconfig.json ./
+
+# 复制 API 代码
+COPY api ./api
+
+# 创建数据目录
+RUN mkdir -p /app/data
+
+# 暴露端口
+EXPOSE 3001
+
+# 使用 PM2 启动服务
+CMD ["pm2-runtime", "api/server.ts", "--env", "production"]
