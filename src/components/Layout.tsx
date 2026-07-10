@@ -11,7 +11,9 @@ import {
   BarChart3, 
   LogOut,
   School,
-  CalendarDays
+  CalendarDays,
+  Tag,
+  ClipboardList
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -36,8 +38,10 @@ const Layout = ({ children, role }: LayoutProps) => {
         { path: '/admin/teachers', label: '师资管理', icon: Users },
         { path: '/admin/students', label: '学员管理', icon: User },
         { path: '/admin/courses', label: '课程管理', icon: BookOpen },
+        { path: '/admin/categories', label: '班级分类', icon: Tag },
         { path: '/admin/schedules', label: '排班列表', icon: Calendar },
         { path: '/admin/schedule-calendar', label: '课程表', icon: CalendarDays },
+        { path: '/admin/enrollments', label: '申请审核', icon: ClipboardList },
         { path: '/admin/lessons', label: '课时记录', icon: Clock },
         { path: '/admin/reports', label: '数据报表', icon: BarChart3 },
       ];
@@ -46,12 +50,14 @@ const Layout = ({ children, role }: LayoutProps) => {
         { path: '/teacher/schedule', label: '排班列表', icon: Calendar },
         { path: '/teacher/schedule-calendar', label: '我的课表', icon: CalendarDays },
         { path: '/teacher/students', label: '授课学员', icon: User },
+        { path: '/teacher/enrollments', label: '申请审核', icon: ClipboardList },
         { path: '/teacher/checkin', label: '课时核销', icon: Clock },
       ];
     } else {
       return [
         { path: '/parent/profile', label: '子女档案', icon: User },
         { path: '/parent/schedule', label: '上课安排', icon: Calendar },
+        { path: '/parent/schedule-calendar', label: '课程表', icon: CalendarDays },
         { path: '/parent/lessons', label: '剩余课时', icon: Clock },
         { path: '/parent/comments', label: '历史评语', icon: BookOpen },
       ];

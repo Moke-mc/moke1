@@ -63,6 +63,15 @@ const initDb = () => {
     // 列已存在，忽略错误
   }
 
+  // 添加学生档案字段（照片、个人信息、比赛经历）
+  try { db.exec('ALTER TABLE students ADD COLUMN photo TEXT'); } catch (err) {}
+  try { db.exec('ALTER TABLE students ADD COLUMN gender TEXT'); } catch (err) {}
+  try { db.exec('ALTER TABLE students ADD COLUMN birth_date TEXT'); } catch (err) {}
+  try { db.exec('ALTER TABLE students ADD COLUMN school TEXT'); } catch (err) {}
+  try { db.exec('ALTER TABLE students ADD COLUMN grade TEXT'); } catch (err) {}
+  try { db.exec('ALTER TABLE students ADD COLUMN address TEXT'); } catch (err) {}
+  try { db.exec('ALTER TABLE students ADD COLUMN competition_experiences TEXT'); } catch (err) {}
+
   // Courses table
   db.exec(`
     CREATE TABLE IF NOT EXISTS courses (
@@ -70,6 +79,16 @@ const initDb = () => {
       name TEXT NOT NULL,
       description TEXT,
       duration INTEGER NOT NULL
+    )
+  `);
+
+  // 课程分类表
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS course_categories (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      description TEXT,
+      created_at TEXT NOT NULL
     )
   `);
 
@@ -85,6 +104,50 @@ const initDb = () => {
       status TEXT NOT NULL DEFAULT 'scheduled'
     )
   `);
+
+  // 给 schedules 表添加 category_id 列（如果不存在）
+  try {
+    db.exec('ALTER TABLE schedules ADD COLUMN category_id TEXT');
+  } catch (err) {
+    // 列已存在，忽略错误
+  }
+
+  // 申请上课表（家长端申请审核）
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS enrollments (
+      id TEXT PRIMARY KEY,
+      student_id TEXT NOT NULL,
+      schedule_id TEXT,
+      course_id TEXT,
+      teacher_id TEXT,
+      date TEXT,
+      time TEXT,
+      status TEXT NOT NULL DEFAULT 'pending',
+      parent_id TEXT,
+      message TEXT,
+      created_at TEXT NOT NULL,
+      reviewed_by TEXT,
+      reviewed_at TEXT
+    )
+  `);
+
+  // 时间段管理表（管理员自定义课表时间线）
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS time_slots (
+      id TEXT PRIMARY KEY,
+      start_time TEXT NOT NULL,
+      end_time TEXT NOT NULL,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      category_id TEXT
+    )
+  `);
+
+  // 给 time_slots 表添加 category_id 列（如果不存在，用于旧表升级）
+  try {
+    db.exec('ALTER TABLE time_slots ADD COLUMN category_id TEXT');
+  } catch (err) {
+    // 列已存在，忽略错误
+  }
 
   // Lesson records table
   db.exec(`
@@ -142,12 +205,54 @@ const initDb = () => {
       ('course-001', '数学基础班', '初中数学基础课程', 60)
     `).run();
 
+    // Insert sample categories
+    const now = new Date().toISOString();
+    db.prepare(`
+      INSERT INTO course_categories (id, name, description, created_at) VALUES 
+      ('cat-001', '穿越机班', '穿越机相关课程分类', ?),
+      ('cat-002', '基础班', '基础课程分类', ?),
+      ('cat-003', '编程班', '编程相关课程分类', ?)
+    `).run(now, now, now);
+
     // Insert sample schedule
     const today = new Date().toISOString().split('T')[0];
     db.prepare(`
-      INSERT INTO schedules (id, teacher_id, student_id, course_id, date, time, status) VALUES 
-      ('schedule-001', 'teacher-001', 'student-001', 'course-001', ?, '10:00', 'scheduled')
+      INSERT INTO schedules (id, teacher_id, student_id, course_id, date, time, status, category_id) VALUES 
+      ('schedule-001', 'teacher-001', 'student-001', 'course-001', ?, '10:00', 'scheduled', 'cat-002')
     `).run(today);
+
+    // Insert default time slots — 总课表通用时段（category_id 为 NULL）
+    db.prepare(`
+      INSERT INTO time_slots (id, start_time, end_time, sort_order, category_id) VALUES 
+      ('slot-1', '09:00', '10:30', 1, NULL),
+      ('slot-2', '10:30', '12:00', 2, NULL),
+      ('slot-3', '14:00', '15:30', 3, NULL),
+      ('slot-4', '15:30', '17:00', 4, NULL),
+      ('slot-5', '17:00', '18:30', 5, NULL),
+      ('slot-6', '18:30', '20:00', 6, NULL)
+    `).run();
+
+    // 穿越机班 独立时段
+    db.prepare(`
+      INSERT INTO time_slots (id, start_time, end_time, sort_order, category_id) VALUES 
+      ('slot-cat001-1', '09:00', '10:30', 1, 'cat-001'),
+      ('slot-cat001-2', '14:00', '15:30', 2, 'cat-001')
+    `).run();
+
+    // 基础班 独立时段
+    db.prepare(`
+      INSERT INTO time_slots (id, start_time, end_time, sort_order, category_id) VALUES 
+      ('slot-cat002-1', '10:30', '12:00', 1, 'cat-002'),
+      ('slot-cat002-2', '15:30', '17:00', 2, 'cat-002'),
+      ('slot-cat002-3', '18:30', '20:00', 3, 'cat-002')
+    `).run();
+
+    // 编程班 独立时段
+    db.prepare(`
+      INSERT INTO time_slots (id, start_time, end_time, sort_order, category_id) VALUES 
+      ('slot-cat003-1', '09:00', '10:30', 1, 'cat-003'),
+      ('slot-cat003-2', '17:00', '18:30', 2, 'cat-003')
+    `).run();
   }
 };
 

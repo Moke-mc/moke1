@@ -10,34 +10,48 @@ interface Schedule {
   teacher_id: string;
   student_id: string;
   course_id: string;
+  category_id?: string;
   date: string;
   time: string;
   status: string;
   teacher_name: string;
   student_name: string;
   course_name: string;
+  category_name?: string;
+}
+
+interface TimeSlot {
+  id: string;
+  start_time: string;
+  end_time: string;
+  sort_order: number;
 }
 
 const TeacherScheduleCalendar = () => {
   const { user } = useStore();
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
 
-  const fetchSchedules = async () => {
+  const fetchData = async () => {
     if (!user) return;
     try {
-      const data = await fetchAPI<Schedule[]>(`/api/schedules?teacherId=${user.id}`);
-      setSchedules(data);
+      const [schedulesData, slotsData] = await Promise.all([
+        fetchAPI<Schedule[]>(`/api/schedules?teacherId=${user.id}`),
+        fetchAPI<TimeSlot[]>('/api/time-slots'),
+      ]);
+      setSchedules(schedulesData);
+      setTimeSlots(slotsData);
     } catch (err) {
-      console.error('Failed to fetch schedules');
+      console.error('Failed to fetch data');
     }
   };
 
   useEffect(() => {
-    fetchSchedules();
+    fetchData();
   }, [user]);
 
   const handleScheduleClick = (schedule: Schedule) => {
-    alert(`课程详情\n\n学员：${schedule.student_name}\n课程：${schedule.course_name}\n时间：${schedule.date} ${schedule.time}\n状态：${
+    alert(`课程详情\n\n学员：${schedule.student_name}\n课程：${schedule.course_name}\n分类：${schedule.category_name || '未分类'}\n时间：${schedule.date} ${schedule.time}\n状态：${
       schedule.status === 'completed' ? '已完成' : 
       schedule.status === 'cancelled' ? '已取消' : '待上课'
     }`);
@@ -55,6 +69,7 @@ const TeacherScheduleCalendar = () => {
 
         <ScheduleCalendar
           schedules={schedules}
+          timeSlots={timeSlots}
           onScheduleClick={handleScheduleClick}
         />
 

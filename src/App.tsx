@@ -6,16 +6,20 @@ import AdminDashboard from "./pages/admin/Dashboard";
 import AdminTeachers from "./pages/admin/Teachers";
 import AdminStudents from "./pages/admin/Students";
 import AdminCourses from "./pages/admin/Courses";
+import AdminCategories from "./pages/admin/Categories";
 import AdminSchedules from "./pages/admin/Schedules";
 import AdminScheduleCalendarPage from "./pages/admin/ScheduleCalendarPage";
 import AdminLessons from "./pages/admin/Lessons";
 import AdminReports from "./pages/admin/Reports";
+import AdminEnrollments from "./pages/admin/Enrollments";
 import TeacherSchedule from "./pages/teacher/Schedule";
 import TeacherScheduleCalendarPage from "./pages/teacher/ScheduleCalendarPage";
 import TeacherStudents from "./pages/teacher/Students";
 import TeacherCheckin from "./pages/teacher/Checkin";
+import TeacherEnrollments from "./pages/teacher/Enrollments";
 import ParentProfile from "./pages/parent/Profile";
 import ParentSchedule from "./pages/parent/Schedule";
+import ParentScheduleCalendar from "./pages/parent/ScheduleCalendar";
 import ParentLessons from "./pages/parent/Lessons";
 import ParentComments from "./pages/parent/Comments";
 
@@ -48,18 +52,22 @@ export default function App() {
         <Route path="/admin/teachers" element={<ProtectedRoute allowedRoles={["admin"]}><AdminTeachers /></ProtectedRoute>} />
         <Route path="/admin/students" element={<ProtectedRoute allowedRoles={["admin"]}><AdminStudents /></ProtectedRoute>} />
         <Route path="/admin/courses" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCourses /></ProtectedRoute>} />
+        <Route path="/admin/categories" element={<ProtectedRoute allowedRoles={["admin"]}><AdminCategories /></ProtectedRoute>} />
         <Route path="/admin/schedules" element={<ProtectedRoute allowedRoles={["admin"]}><AdminSchedules /></ProtectedRoute>} />
         <Route path="/admin/schedule-calendar" element={<ProtectedRoute allowedRoles={["admin"]}><AdminScheduleCalendarPage /></ProtectedRoute>} />
         <Route path="/admin/lessons" element={<ProtectedRoute allowedRoles={["admin"]}><AdminLessons /></ProtectedRoute>} />
         <Route path="/admin/reports" element={<ProtectedRoute allowedRoles={["admin"]}><AdminReports /></ProtectedRoute>} />
+        <Route path="/admin/enrollments" element={<ProtectedRoute allowedRoles={["admin"]}><AdminEnrollments /></ProtectedRoute>} />
 
         <Route path="/teacher/schedule" element={<ProtectedRoute allowedRoles={["teacher"]}><TeacherSchedule /></ProtectedRoute>} />
         <Route path="/teacher/schedule-calendar" element={<ProtectedRoute allowedRoles={["teacher"]}><TeacherScheduleCalendarPage /></ProtectedRoute>} />
         <Route path="/teacher/students" element={<ProtectedRoute allowedRoles={["teacher"]}><TeacherStudents /></ProtectedRoute>} />
         <Route path="/teacher/checkin" element={<ProtectedRoute allowedRoles={["teacher"]}><TeacherCheckin /></ProtectedRoute>} />
+        <Route path="/teacher/enrollments" element={<ProtectedRoute allowedRoles={["teacher"]}><TeacherEnrollments /></ProtectedRoute>} />
 
         <Route path="/parent/profile" element={<ProtectedRoute allowedRoles={["parent"]}><ParentProfile /></ProtectedRoute>} />
         <Route path="/parent/schedule" element={<ProtectedRoute allowedRoles={["parent"]}><ParentSchedule /></ProtectedRoute>} />
+        <Route path="/parent/schedule-calendar" element={<ProtectedRoute allowedRoles={["parent"]}><ParentScheduleCalendar /></ProtectedRoute>} />
         <Route path="/parent/lessons" element={<ProtectedRoute allowedRoles={["parent"]}><ParentLessons /></ProtectedRoute>} />
         <Route path="/parent/comments" element={<ProtectedRoute allowedRoles={["parent"]}><ParentComments /></ProtectedRoute>} />
       </Routes>

@@ -9,6 +9,7 @@ interface Teacher {
   phone: string;
   email: string;
   subject: string;
+  username?: string;
 }
 
 const Teachers = () => {
@@ -20,6 +21,8 @@ const Teachers = () => {
     phone: '',
     email: '',
     subject: '',
+    username: '',
+    password: '',
   });
 
   const fetchTeachers = async () => {
@@ -39,19 +42,21 @@ const Teachers = () => {
     e.preventDefault();
     try {
       if (editingTeacher) {
+        const { password, ...rest } = formData;
         await fetchAPI(`/api/teachers/${editingTeacher.id}`, {
           method: 'PUT',
-          body: JSON.stringify(formData),
+          body: JSON.stringify(rest),
         });
       } else {
         await fetchAPI('/api/teachers', {
           method: 'POST',
           body: JSON.stringify(formData),
         });
+        alert(`教师创建成功！\n登录账号：${formData.username}\n请妥善保管账号信息。`);
       }
       setShowModal(false);
       setEditingTeacher(null);
-      setFormData({ name: '', phone: '', email: '', subject: '' });
+      setFormData({ name: '', phone: '', email: '', subject: '', username: '', password: '' });
       fetchTeachers();
     } catch (err) {
       console.error('Failed to save teacher');
@@ -60,7 +65,14 @@ const Teachers = () => {
 
   const handleEdit = (teacher: Teacher) => {
     setEditingTeacher(teacher);
-    setFormData(teacher);
+    setFormData({
+      name: teacher.name,
+      phone: teacher.phone,
+      email: teacher.email,
+      subject: teacher.subject,
+      username: teacher.username || '',
+      password: '',
+    });
     setShowModal(true);
   };
 
@@ -83,7 +95,7 @@ const Teachers = () => {
           <button
             onClick={() => {
               setEditingTeacher(null);
-              setFormData({ name: '', phone: '', email: '', subject: '' });
+              setFormData({ name: '', phone: '', email: '', subject: '', username: '', password: '' });
               setShowModal(true);
             }}
             className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -101,6 +113,7 @@ const Teachers = () => {
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">电话</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">邮箱</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">科目</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">登录账号</th>
                 <th className="px-6 py-4 text-right text-sm font-medium text-gray-500">操作</th>
               </tr>
             </thead>
@@ -118,6 +131,7 @@ const Teachers = () => {
                   <td className="px-6 py-4 text-gray-600">{teacher.phone}</td>
                   <td className="px-6 py-4 text-gray-600">{teacher.email || '-'}</td>
                   <td className="px-6 py-4 text-gray-600">{teacher.subject}</td>
+                  <td className="px-6 py-4 text-gray-600">{teacher.username || '-'}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button
@@ -192,6 +206,28 @@ const Teachers = () => {
                   required
                 />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">登录用户名</label>
+                <input
+                  type="text"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              {!editingTeacher && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">登录密码</label>
+                  <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+              )}
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"

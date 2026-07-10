@@ -8,6 +8,8 @@ interface Schedule {
   teacher_id: string;
   student_id: string;
   course_id: string;
+  category_id: string;
+  category_name: string;
   date: string;
   time: string;
   status: string;
@@ -31,6 +33,12 @@ interface Course {
   name: string;
 }
 
+interface Category {
+  id: string;
+  name: string;
+  description: string;
+}
+
 const TIME_SLOTS = [
   { value: '09:00', label: '09:00 - 10:30' },
   { value: '10:30', label: '10:30 - 12:00' },
@@ -40,44 +48,70 @@ const TIME_SLOTS = [
   { value: '18:30', label: '18:30 - 20:00' },
 ];
 
+const CUSTOM_TIME_VALUE = '__custom__';
+
 const Schedules = () => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [students, setStudents] = useState<Student[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [filterCategoryId, setFilterCategoryId] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
   const [formData, setFormData] = useState({
     teacherId: '',
     studentId: '',
     courseId: '',
+    categoryId: '',
     date: new Date().toISOString().split('T')[0],
     time: '09:00',
+    customTimeStart: '09:00',
+    customTimeEnd: '10:30',
   });
 
-  const fetchData = async () => {
+  const fetchSchedules = async (categoryId: string) => {
     try {
-      const [schedulesData, teachersData, studentsData, coursesData] = await Promise.all([
-        fetchAPI<Schedule[]>('/api/schedules'),
+      const url = categoryId
+        ? `/api/schedules?categoryId=${categoryId}`
+        : '/api/schedules';
+      const data = await fetchAPI<Schedule[]>(url);
+      setSchedules(data);
+    } catch (err) {
+      console.error('Failed to fetch schedules');
+    }
+  };
+
+  const fetchOptions = async () => {
+    try {
+      const [teachersData, studentsData, coursesData, categoriesData] = await Promise.all([
         fetchAPI<Teacher[]>('/api/teachers'),
         fetchAPI<Student[]>('/api/students'),
         fetchAPI<Course[]>('/api/courses'),
+        fetchAPI<Category[]>('/api/categories'),
       ]);
-      setSchedules(schedulesData);
       setTeachers(teachersData);
       setStudents(studentsData);
       setCourses(coursesData);
+      setCategories(categoriesData);
     } catch (err) {
       console.error('Failed to fetch data');
     }
   };
 
   useEffect(() => {
-    fetchData();
+    fetchOptions();
   }, []);
+
+  useEffect(() => {
+    fetchSchedules(filterCategoryId);
+  }, [filterCategoryId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const timeValue = formData.time === CUSTOM_TIME_VALUE
+      ? `${formData.customTimeStart}-${formData.customTimeEnd}`
+      : formData.time;
     try {
       if (editingSchedule) {
         await fetchAPI(`/api/schedules/${editingSchedule.id}`, {
@@ -86,8 +120,9 @@ const Schedules = () => {
             teacherId: formData.teacherId,
             studentId: formData.studentId,
             courseId: formData.courseId,
+            categoryId: formData.categoryId,
             date: formData.date,
-            time: formData.time,
+            time: timeValue,
             status: 'scheduled',
           }),
         });
@@ -98,8 +133,9 @@ const Schedules = () => {
             teacherId: formData.teacherId,
             studentId: formData.studentId,
             courseId: formData.courseId,
+            categoryId: formData.categoryId,
             date: formData.date,
-            time: formData.time,
+            time: timeValue,
           }),
         });
       }
@@ -109,10 +145,13 @@ const Schedules = () => {
         teacherId: '',
         studentId: '',
         courseId: '',
+        categoryId: '',
         date: new Date().toISOString().split('T')[0],
         time: '09:00',
+        customTimeStart: '09:00',
+        customTimeEnd: '10:30',
       });
-      fetchData();
+      fetchSchedules(filterCategoryId);
     } catch (err) {
       console.error('Failed to save schedule');
     }
@@ -120,12 +159,16 @@ const Schedules = () => {
 
   const handleEdit = (schedule: Schedule) => {
     setEditingSchedule(schedule);
+    const isCustom = schedule.time.includes('-');
     setFormData({
       teacherId: schedule.teacher_id,
       studentId: schedule.student_id,
       courseId: schedule.course_id,
+      categoryId: schedule.category_id || '',
       date: schedule.date,
-      time: schedule.time,
+      time: isCustom ? CUSTOM_TIME_VALUE : schedule.time,
+      customTimeStart: isCustom ? schedule.time.split('-')[0] : '09:00',
+      customTimeEnd: isCustom ? schedule.time.split('-')[1] : '10:30',
     });
     setShowModal(true);
   };
@@ -134,7 +177,7 @@ const Schedules = () => {
     if (confirm('确定要删除这个排班吗？')) {
       try {
         await fetchAPI(`/api/schedules/${id}`, { method: 'DELETE' });
-        fetchData();
+        fetchSchedules(filterCategoryId);
       } catch (err) {
         console.error('Failed to delete schedule');
       }
@@ -164,6 +207,10 @@ const Schedules = () => {
   };
 
   const getTimeSlotLabel = (time: string) => {
+    if (time.includes('-')) {
+      const [start, end] = time.split('-');
+      return `${start} - ${end}`;
+    }
     const slot = TIME_SLOTS.find(s => s.value === time);
     return slot ? slot.label : time;
   };
@@ -180,8 +227,11 @@ const Schedules = () => {
                 teacherId: teachers[0]?.id || '',
                 studentId: students[0]?.id || '',
                 courseId: courses[0]?.id || '',
+                categoryId: '',
                 date: new Date().toISOString().split('T')[0],
                 time: '09:00',
+                customTimeStart: '09:00',
+                customTimeEnd: '10:30',
               });
               setShowModal(true);
             }}
@@ -190,6 +240,22 @@ const Schedules = () => {
             <Plus className="w-5 h-5" />
             添加排班
           </button>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-gray-700">分类筛选</label>
+          <select
+            value={filterCategoryId}
+            onChange={(e) => setFilterCategoryId(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+          >
+            <option value="">全部分类</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
@@ -201,6 +267,7 @@ const Schedules = () => {
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">教师</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">学员</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">课程</th>
+                <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">分类</th>
                 <th className="px-6 py-4 text-left text-sm font-medium text-gray-500">状态</th>
                 <th className="px-6 py-4 text-right text-sm font-medium text-gray-500">操作</th>
               </tr>
@@ -215,6 +282,7 @@ const Schedules = () => {
                   <td className="px-6 py-4 text-gray-800">{schedule.teacher_name}</td>
                   <td className="px-6 py-4 text-gray-800">{schedule.student_name}</td>
                   <td className="px-6 py-4 text-gray-600">{schedule.course_name}</td>
+                  <td className="px-6 py-4 text-gray-600">{schedule.category_name || '-'}</td>
                   <td className="px-6 py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(schedule.status)}`}>
                       {getStatusText(schedule.status)}
@@ -303,6 +371,21 @@ const Schedules = () => {
                   ))}
                 </select>
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">课程分类</label>
+                <select
+                  value={formData.categoryId}
+                  onChange={(e) => setFormData({ ...formData, categoryId: e.target.value })}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                >
+                  <option value="">请选择分类</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">日期</label>
@@ -328,9 +411,34 @@ const Schedules = () => {
                         {slot.label}
                       </option>
                     ))}
+                    <option value={CUSTOM_TIME_VALUE}>自定义时间</option>
                   </select>
                 </div>
               </div>
+              {formData.time === CUSTOM_TIME_VALUE && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">开始时间</label>
+                    <input
+                      type="time"
+                      value={formData.customTimeStart}
+                      onChange={(e) => setFormData({ ...formData, customTimeStart: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">结束时间</label>
+                    <input
+                      type="time"
+                      value={formData.customTimeEnd}
+                      onChange={(e) => setFormData({ ...formData, customTimeEnd: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
               <div className="flex gap-3 pt-4">
                 <button
                   type="button"

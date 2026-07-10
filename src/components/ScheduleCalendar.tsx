@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ChevronLeft, ChevronRight, User, BookOpen, Clock } from 'lucide-react';
 
 interface Schedule {
@@ -6,30 +6,32 @@ interface Schedule {
   teacher_id: string;
   student_id: string;
   course_id: string;
+  category_id?: string;
   date: string;
   time: string;
   status: string;
   teacher_name: string;
   student_name: string;
   course_name: string;
+  category_name?: string;
+}
+
+interface TimeSlot {
+  id: string;
+  start_time: string;
+  end_time: string;
+  sort_order: number;
 }
 
 interface ScheduleCalendarProps {
   schedules: Schedule[];
+  timeSlots: TimeSlot[];
   teacherFilter?: string;
+  categoryFilter?: string;
   onScheduleClick?: (schedule: Schedule) => void;
 }
 
-const TIME_SLOTS = [
-  { value: '09:00', label: '09:00', display: '09:00 - 10:30' },
-  { value: '10:30', label: '10:30', display: '10:30 - 12:00' },
-  { value: '14:00', label: '14:00', display: '14:00 - 15:30' },
-  { value: '15:30', label: '15:30', display: '15:30 - 17:00' },
-  { value: '17:00', label: '17:00', display: '17:00 - 18:30' },
-  { value: '18:30', label: '18:30', display: '18:30 - 20:00' },
-];
-
-const ScheduleCalendar = ({ schedules, teacherFilter, onScheduleClick }: ScheduleCalendarProps) => {
+const ScheduleCalendar = ({ schedules, timeSlots, teacherFilter, categoryFilter, onScheduleClick }: ScheduleCalendarProps) => {
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const now = new Date();
     const dayOfWeek = now.getDay();
@@ -48,15 +50,29 @@ const ScheduleCalendar = ({ schedules, teacherFilter, onScheduleClick }: Schedul
 
   const weekDaysNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
 
-  const filteredSchedules = teacherFilter 
-    ? schedules.filter(s => s.teacher_id === teacherFilter)
-    : schedules;
+  const filteredSchedules = schedules.filter(s => {
+    if (teacherFilter && s.teacher_id !== teacherFilter) return false;
+    if (categoryFilter && s.category_id !== categoryFilter) return false;
+    return true;
+  });
 
-  const getSchedulesForDayAndTime = (date: Date, time: string) => {
+  // 匹配时间段：schedule.time 可能是 "HH:MM" 或 "HH:MM-HH:MM" 格式
+  const matchSlot = (schedule: Schedule, slot: TimeSlot) => {
+    const time = schedule.time;
+    if (time.includes('-')) {
+      // 自定义格式 "HH:MM-HH:MM"
+      const [start, end] = time.split('-');
+      return start.trim() === slot.start_time && end.trim() === slot.end_time;
+    }
+    // 旧格式 "HH:MM"，用 start_time 匹配
+    return time === slot.start_time;
+  };
+
+  const getSchedulesForDayAndSlot = (date: Date, slot: TimeSlot) => {
     const dateStr = date.toISOString().split('T')[0];
     return filteredSchedules.filter(s => {
       const scheduleDate = new Date(s.date);
-      return scheduleDate.toISOString().split('T')[0] === dateStr && s.time === time;
+      return scheduleDate.toISOString().split('T')[0] === dateStr && matchSlot(s, slot);
     });
   };
 
@@ -95,11 +111,6 @@ const ScheduleCalendar = ({ schedules, teacherFilter, onScheduleClick }: Schedul
       default:
         return 'bg-blue-500';
     }
-  };
-
-  const getTimeSlotDisplay = (time: string) => {
-    const slot = TIME_SLOTS.find(s => s.value === time);
-    return slot ? slot.display : time;
   };
 
   return (
@@ -157,50 +168,56 @@ const ScheduleCalendar = ({ schedules, teacherFilter, onScheduleClick }: Schedul
             ))}
           </div>
 
-          {/* Time Slots */}
-          {TIME_SLOTS.map((slot) => (
-            <div key={slot.value} className="grid grid-cols-8 border-b hover:bg-gray-50">
-              <div className="p-3 text-center text-sm font-medium text-gray-500 border-r bg-gray-50">
-                <div className="flex items-center justify-center gap-1">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-orange-600">{slot.display}</span>
-                </div>
-              </div>
-              {weekDays.map((date, dayIndex) => {
-                const daySchedules = getSchedulesForDayAndTime(date, slot.value);
-                return (
-                  <div
-                    key={dayIndex}
-                    className={`p-2 border-r min-h-[100px] ${
-                      isToday(date) ? 'bg-blue-50/30' : ''
-                    }`}
-                  >
-                    {daySchedules.map((schedule) => (
-                      <div
-                        key={schedule.id}
-                        onClick={() => onScheduleClick?.(schedule)}
-                        className={`${getStatusColor(schedule.status)} text-white p-2 rounded-lg mb-1 cursor-pointer hover:opacity-90 transition-opacity text-xs`}
-                      >
-                        <div className="font-semibold flex items-center gap-1">
-                          <User className="w-3 h-3" />
-                          {schedule.student_name}
-                        </div>
-                        <div className="flex items-center gap-1 mt-1 opacity-90">
-                          <BookOpen className="w-3 h-3" />
-                          {schedule.course_name}
-                        </div>
-                        {!teacherFilter && (
-                          <div className="mt-1 opacity-75 text-xs">
-                            {schedule.teacher_name}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+          {/* Time Slots - 动态从 timeSlots 渲染 */}
+          {timeSlots.length > 0 ? (
+            timeSlots.map((slot) => (
+              <div key={slot.id} className="grid grid-cols-8 border-b hover:bg-gray-50">
+                <div className="p-3 text-center text-sm font-medium text-gray-500 border-r bg-gray-50">
+                  <div className="flex items-center justify-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span className="text-orange-600">{slot.start_time} - {slot.end_time}</span>
                   </div>
-                );
-              })}
+                </div>
+                {weekDays.map((date, dayIndex) => {
+                  const daySchedules = getSchedulesForDayAndSlot(date, slot);
+                  return (
+                    <div
+                      key={dayIndex}
+                      className={`p-2 border-r min-h-[100px] ${
+                        isToday(date) ? 'bg-blue-50/30' : ''
+                      }`}
+                    >
+                      {daySchedules.map((schedule) => (
+                        <div
+                          key={schedule.id}
+                          onClick={() => onScheduleClick?.(schedule)}
+                          className={`${getStatusColor(schedule.status)} text-white p-2 rounded-lg mb-1 cursor-pointer hover:opacity-90 transition-opacity text-xs`}
+                        >
+                          <div className="font-semibold flex items-center gap-1">
+                            <User className="w-3 h-3" />
+                            {schedule.student_name}
+                          </div>
+                          <div className="flex items-center gap-1 mt-1 opacity-90">
+                            <BookOpen className="w-3 h-3" />
+                            {schedule.course_name}
+                          </div>
+                          {!teacherFilter && (
+                            <div className="mt-1 opacity-75 text-xs">
+                              {schedule.teacher_name}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            ))
+          ) : (
+            <div className="p-8 text-center text-gray-500">
+              暂无时间段，请先在"时间线管理"中添加时间段
             </div>
-          ))}
+          )}
         </div>
       </div>
 
