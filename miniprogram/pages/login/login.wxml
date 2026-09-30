@@ -1,0 +1,46 @@
+<!--pages/login/login.wxml-->
+<view class="login-page">
+  <view class="logo">
+    <view class="logo-icon">教</view>
+    <view class="logo-title">教务系统</view>
+    <view class="logo-sub">家长 · 教师 · 管理员</view>
+  </view>
+
+  <view class="login-card">
+    <!-- 切换 Tab -->
+    <view class="tabs">
+      <view class="tab {{loginType === 'wx' ? 'active' : ''}}" bindtap="switchType" data-type="wx">微信登录</view>
+      <view class="tab {{loginType === 'pwd' ? 'active' : ''}}" bindtap="switchType" data-type="pwd">账号密码</view>
+    </view>
+
+    <!-- 微信登录 -->
+    <view wx:if="{{loginType === 'wx'}}" class="wx-login">
+      <view class="wx-tip">点击下方按钮，使用微信快捷登录</view>
+      <button class="btn-primary wx-btn" bindtap="wxLogin" loading="{{loading}}" disabled="{{loading}}">
+        微信一键登录
+      </button>
+      <view class="switch-tip" bindtap="switchType" data-type="pwd">没有微信？使用账号密码登录</view>
+    </view>
+
+    <!-- 账号密码登录 -->
+    <view wx:if="{{loginType === 'pwd'}}" class="pwd-login">
+      <view class="form-item">
+        <view class="label">用户名</view>
+        <input class="input" placeholder="请输入用户名" value="{{username}}" data-field="username" bindinput="onInput" />
+      </view>
+      <view class="form-item">
+        <view class="label">密码</view>
+        <input class="input" placeholder="请输入密码" password="{{true}}" value="{{password}}" data-field="password" bindinput="onInput" />
+      </view>
+      <button class="btn-primary" bindtap="pwdLogin" loading="{{loading}}" disabled="{{loading}}">登录</button>
+      <view class="switch-tip" bindtap="switchType" data-type="wx">使用微信一键登录</view>
+    </view>
+  </view>
+
+  <view class="demo-tip">
+    <view class="text-sm text-gray">测试账号：</view>
+    <view class="text-sm text-gray-light">家长 parent1 / parent123</view>
+    <view class="text-sm text-gray-light">教师 teacher1 / teacher123</view>
+    <view class="text-sm text-gray-light">管理员 admin / admin123</view>
+  </view>
+</view>

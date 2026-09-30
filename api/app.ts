@@ -20,6 +20,7 @@ import lessonsRoutes from './routes/lessons.js'
 import categoriesRoutes from './routes/categories.js'
 import enrollmentsRoutes from './routes/enrollments.js'
 import timeSlotsRoutes from './routes/timeSlots.js'
+import mpRoutes from './routes/mp.js'
 
 // for esm mode
 const __filename = fileURLToPath(import.meta.url)
@@ -71,6 +72,7 @@ app.use('/api/lessons', lessonsRoutes)
 app.use('/api/categories', categoriesRoutes)
 app.use('/api/enrollments', enrollmentsRoutes)
 app.use('/api/time-slots', timeSlotsRoutes)
+app.use('/api/mp', mpRoutes)
 
 /**
  * health

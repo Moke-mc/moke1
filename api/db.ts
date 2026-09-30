@@ -43,6 +43,12 @@ const initDb = () => {
     )
   `);
 
+  // 给 parents 表添加 openid 字段（用于微信小程序登录）
+  try { db.exec('ALTER TABLE parents ADD COLUMN openid TEXT'); } catch (err) {}
+  // 给 parents 表添加 avatar 字段（微信头像）
+  try { db.exec('ALTER TABLE parents ADD COLUMN avatar TEXT'); } catch (err) {}
+  try { db.exec('ALTER TABLE parents ADD COLUMN wx_nickname TEXT'); } catch (err) {}
+
   // Students table
   db.exec(`
     CREATE TABLE IF NOT EXISTS students (

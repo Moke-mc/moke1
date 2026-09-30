@@ -1,0 +1,57 @@
+<!--pages/admin/teachers/teachers.wxml-->
+<view class="container">
+  <view class="flex items-center justify-between">
+    <view class="page-title">教师管理</view>
+    <view class="btn-primary add-btn" bindtap="showAdd">+ 新增</view>
+  </view>
+
+  <view wx:if="{{teachers.length === 0 && !loading}}" class="card empty">暂无教师</view>
+  <view class="card" wx:for="{{teachers}}" wx:key="id">
+    <view class="flex items-center">
+      <view class="avatar">{{item.name[0]}}</view>
+      <view class="flex-1 ml">
+        <view class="font-bold text-md">{{item.name}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.subject}}</view>
+        <view class="text-sm text-gray-light mt-sm">📱 {{item.phone}}</view>
+      </view>
+    </view>
+    <view class="actions mt">
+      <view class="btn-ghost action-btn" bindtap="showEdit" data-teacher="{{item}}">编辑</view>
+      <view class="btn-ghost action-btn danger" bindtap="del" data-teacher="{{item}}">删除</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{showForm}}" class="modal-mask" bindtap="hideForm">
+  <view class="modal" catchtap="">
+    <view class="modal-title">{{editingId ? '编辑教师' : '新增教师'}}</view>
+    <view class="form-item">
+      <view class="label">姓名 *</view>
+      <input class="input" value="{{form.name}}" data-field="name" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <view class="label">手机号 *</view>
+      <input class="input" value="{{form.phone}}" data-field="phone" bindinput="onInput" type="number" maxlength="11" />
+    </view>
+    <view class="form-item">
+      <view class="label">科目 *</view>
+      <input class="input" value="{{form.subject}}" data-field="subject" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <view class="label">邮箱</view>
+      <input class="input" value="{{form.email}}" data-field="email" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <view class="label">登录用户名</view>
+      <input class="input" value="{{form.username}}" data-field="username" bindinput="onInput" placeholder="留空自动生成" />
+    </view>
+    <view class="form-item">
+      <view class="label">登录密码{{editingId ? '（不修改留空）' : ''}}</view>
+      <input class="input" value="{{form.password}}" data-field="password" bindinput="onInput" placeholder="留空默认 123456" />
+    </view>
+    <view class="modal-actions">
+      <button class="btn-ghost" bindtap="hideForm">取消</button>
+      <button class="btn-primary" bindtap="submit">保存</button>
+    </view>
+  </view>
+</view>

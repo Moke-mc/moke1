@@ -1,0 +1,38 @@
+<!--pages/parent/schedule/schedule.wxml-->
+<view class="container">
+  <view class="page-title">课程表</view>
+
+  <!-- 学生选择 -->
+  <scroll-view scroll-x class="student-tabs">
+    <view
+      wx:for="{{students}}"
+      wx:key="id"
+      class="student-tab {{currentStudentId === item.id ? 'active' : ''}}"
+      bindtap="switchStudent"
+      data-id="{{item.id}}"
+    >{{item.name}}</view>
+  </scroll-view>
+
+  <!-- 筛选 -->
+  <view class="filter-bar">
+    <view class="filter {{filter === 'all' ? 'active' : ''}}" bindtap="switchFilter" data-filter="all">全部</view>
+    <view class="filter {{filter === 'upcoming' ? 'active' : ''}}" bindtap="switchFilter" data-filter="upcoming">未上</view>
+    <view class="filter {{filter === 'completed' ? 'active' : ''}}" bindtap="switchFilter" data-filter="completed">已完成</view>
+  </view>
+
+  <view wx:if="{{schedules.length === 0 && !loading}}" class="card empty">暂无课程</view>
+
+  <view class="card" wx:for="{{schedules}}" wx:key="id">
+    <view class="flex items-center justify-between">
+      <view class="flex-1">
+        <view class="font-bold text-md">{{item.course_name}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.teacher_name}} 老师</view>
+        <view class="text-sm text-gray mt-sm">📅 {{item.date}} {{item.time}}</view>
+        <view wx:if="{{item.category_name}}" class="tag mt-sm">{{item.category_name}}</view>
+      </view>
+      <view class="status-tag {{item.status === 'completed' ? 'tag-gray' : 'tag'}}">
+        {{item.status === 'completed' ? '已完成' : '待上课'}}
+      </view>
+    </view>
+  </view>
+</view>

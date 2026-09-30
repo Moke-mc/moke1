@@ -60,3 +60,6 @@ coverage
 # Misc
 deploy-package
 edu-system-deploy.tar.gz
+
+# Trae temp share packages
+.trae-html-share-packages/

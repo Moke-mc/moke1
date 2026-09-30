@@ -1,0 +1,25 @@
+<!--pages/parent/bind/bind.wxml-->
+<view class="container">
+  <view class="page-title">绑定学生</view>
+  <view class="text-sm text-gray mb">通过学生在系统登记的手机号绑定，一个家长最多可绑定多个学生</view>
+
+  <view class="card">
+    <view class="form-item">
+      <view class="label">学生手机号 <text class="required">*</text></view>
+      <input class="input" placeholder="请输入学生手机号" value="{{studentPhone}}" data-field="studentPhone" bindinput="onInput" type="number" maxlength="11" />
+    </view>
+    <view class="form-item">
+      <view class="label">学生姓名（可选）</view>
+      <input class="input" placeholder="如有重名请填写" value="{{studentName}}" data-field="studentName" bindinput="onInput" />
+    </view>
+
+    <button class="btn-primary" bindtap="submit" loading="{{loading}}" disabled="{{loading}}">确认绑定</button>
+  </view>
+
+  <view class="tips">
+    <view class="text-sm text-gray-light">提示：</view>
+    <view class="text-sm text-gray-light mt-sm">1. 手机号需与教务系统中登记的一致</view>
+    <view class="text-sm text-gray-light mt-sm">2. 若手机号已被其他家长绑定，将会转移到当前家长</view>
+    <view class="text-sm text-gray-light mt-sm">3. 如绑定遇到问题，请联系机构老师</view>
+  </view>
+</view>

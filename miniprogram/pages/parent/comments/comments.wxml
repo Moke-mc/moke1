@@ -1,0 +1,28 @@
+<!--pages/parent/comments/comments.wxml-->
+<view class="container">
+  <view class="page-title">老师点评</view>
+
+  <scroll-view scroll-x class="student-tabs">
+    <view
+      wx:for="{{students}}"
+      wx:key="id"
+      class="student-tab {{currentStudentId === item.id ? 'active' : ''}}"
+      bindtap="switchStudent"
+      data-id="{{item.id}}"
+    >{{item.name}}</view>
+  </scroll-view>
+
+  <view wx:if="{{comments.length === 0 && !loading}}" class="card empty">暂无点评记录</view>
+
+  <view class="card" wx:for="{{comments}}" wx:key="id">
+    <view class="flex items-center justify-between">
+      <view class="font-bold text-md">{{item.course_name}}</view>
+      <view class="text-sm text-gray">{{item.date}}</view>
+    </view>
+    <view class="text-sm text-gray mt-sm">{{item.teacher_name}} 老师</view>
+    <view class="comment-box mt">
+      <view class="text-sm text-gray">课后点评：</view>
+      <view class="comment-text mt-sm">{{item.comment || '老师暂未填写点评'}}</view>
+    </view>
+  </view>
+</view>

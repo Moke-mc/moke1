@@ -1,0 +1,87 @@
+/* pages/parent/profile/profile.wxss */
+.edit-btn {
+  padding: 8rpx 32rpx;
+  font-size: 26rpx;
+}
+.profile-card {
+  text-align: center;
+}
+.profile-photo {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 24rpx;
+  margin: 0 auto;
+}
+.profile-photo-default {
+  background: #10b981;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64rpx;
+  font-weight: 600;
+}
+.profile-photo-edit {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 16rpx;
+  font-size: 40rpx;
+}
+.info-list {
+  text-align: left;
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f3f4f6;
+}
+.info-row:last-child {
+  border-bottom: none;
+}
+.info-label {
+  color: #6b7280;
+  font-size: 28rpx;
+}
+.info-value {
+  color: #1f2937;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+.form-item {
+  margin-bottom: 24rpx;
+}
+.form-item .label {
+  font-size: 26rpx;
+  color: #374151;
+  margin-bottom: 12rpx;
+}
+.radio-label {
+  margin-right: 32rpx;
+  font-size: 28rpx;
+}
+.picker {
+  line-height: 1.5;
+}
+.remove-link {
+  text-align: right;
+}
+.exp-item {
+  padding: 20rpx;
+  background: #f9fafb;
+  border-radius: 12rpx;
+  margin-bottom: 12rpx;
+}
+.add-exp-box {
+  background: #f9fafb;
+  padding: 20rpx;
+  border-radius: 12rpx;
+}
+.actions {
+  display: flex;
+  gap: 24rpx;
+  margin: 32rpx 0;
+}
+.actions button {
+  flex: 1;
+}

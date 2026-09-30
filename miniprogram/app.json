@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/parent/index/index",
+    "pages/parent/schedule/schedule",
+    "pages/parent/comments/comments",
+    "pages/parent/profile/profile",
+    "pages/parent/bind/bind",
+    "pages/teacher/index/index",
+    "pages/teacher/students/students",
+    "pages/teacher/checkin/checkin",
+    "pages/teacher/schedule/schedule",
+    "pages/admin/index/index",
+    "pages/admin/students/students",
+    "pages/admin/teachers/teachers",
+    "pages/admin/courses/courses",
+    "pages/admin/schedules/schedules"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#10b981",
+    "navigationBarTitleText": "教务系统",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f5f5"
+  },
+  "style": "v1",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

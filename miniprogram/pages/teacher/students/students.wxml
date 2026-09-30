@@ -1,0 +1,15 @@
+<!--pages/teacher/students/students.wxml-->
+<view class="container">
+  <view class="page-title">授课学员</view>
+  <view wx:if="{{students.length === 0 && !loading}}" class="card empty">暂无授课学员</view>
+  <view class="card student-card" wx:for="{{students}}" wx:key="id">
+    <view class="flex items-center">
+      <view class="avatar">{{item.name[0]}}</view>
+      <view class="flex-1 ml">
+        <view class="font-bold text-md">{{item.name}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.course}}</view>
+        <view class="text-sm text-gray-light mt-sm">已排 {{item.count}} 节课</view>
+      </view>
+    </view>
+  </view>
+</view>

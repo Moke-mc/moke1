@@ -1,0 +1,64 @@
+<!--pages/admin/schedules/schedules.wxml-->
+<view class="container">
+  <view class="flex items-center justify-between">
+    <view class="page-title">排课管理</view>
+    <view class="btn-primary add-btn" bindtap="showAdd">+ 排课</view>
+  </view>
+
+  <view wx:if="{{schedules.length === 0 && !loading}}" class="card empty">暂无排课</view>
+  <view class="card" wx:for="{{schedules}}" wx:key="id">
+    <view class="flex items-center justify-between">
+      <view class="flex-1">
+        <view class="font-bold text-md">{{item.student_name}} - {{item.course_name}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.teacher_name}} 老师</view>
+        <view class="text-sm text-gray mt-sm">📅 {{item.date}} {{item.time}}</view>
+      </view>
+      <view class="status {{item.status === 'completed' ? 'done' : ''}}">
+        {{item.status === 'completed' ? '已完成' : '待上课'}}
+      </view>
+    </view>
+    <view class="actions mt">
+      <view class="btn-ghost action-btn danger" bindtap="del" data-schedule="{{item}}">删除</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{showForm}}" class="modal-mask" bindtap="hideForm">
+  <view class="modal" catchtap="">
+    <view class="modal-title">新增排课</view>
+    <view class="form-item">
+      <view class="label">学员 *</view>
+      <picker mode="selector" range="{{students}}" range-key="name" bindchange="onPickerChange" data-field="studentId">
+        <view class="input picker">请选择学员</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="label">教师 *</view>
+      <picker mode="selector" range="{{teachers}}" range-key="name" bindchange="onPickerChange" data-field="teacherId">
+        <view class="input picker">请选择教师</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="label">课程 *</view>
+      <picker mode="selector" range="{{courses}}" range-key="name" bindchange="onPickerChange" data-field="courseId">
+        <view class="input picker">请选择课程</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="label">日期 *</view>
+      <picker mode="date" value="{{form.date}}" bindchange="onPickerChange" data-field="date">
+        <view class="input picker">{{form.date}}</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <view class="label">时间 *</view>
+      <picker mode="time" value="{{form.time}}" bindchange="onPickerChange" data-field="time">
+        <view class="input picker">{{form.time}}</view>
+      </picker>
+    </view>
+    <view class="modal-actions">
+      <button class="btn-ghost" bindtap="hideForm">取消</button>
+      <button class="btn-primary" bindtap="submit">排课</button>
+    </view>
+  </view>
+</view>

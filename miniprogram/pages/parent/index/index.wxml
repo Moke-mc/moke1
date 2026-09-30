@@ -1,0 +1,75 @@
+<!--pages/parent/index/index.wxml-->
+<view class="container">
+  <!-- 顶部信息 -->
+  <view class="header">
+    <view class="flex items-center justify-between">
+      <view>
+        <view class="text-lg text-gray-light">欢迎，{{user.name || '家长'}}</view>
+        <view class="text-sm text-gray-light">家长端</view>
+      </view>
+      <view class="logout" bindtap="logout">退出</view>
+    </view>
+  </view>
+
+  <!-- 学生卡片 -->
+  <view class="page-title">我的孩子</view>
+  <view wx:if="{{students.length === 0 && !loading}}" class="card empty-box">
+    <view class="text-gray">还没有绑定孩子</view>
+    <view class="btn-primary mt bind-btn" bindtap="goBind">绑定学生</view>
+  </view>
+
+  <view class="students-list">
+    <view class="card student-card" wx:for="{{students}}" wx:key="id" bindtap="goProfile" data-id="{{item.id}}">
+      <view class="flex items-center">
+        <image wx:if="{{item.photo}}" src="{{item.photo}}" class="avatar" mode="aspectFill"></image>
+        <view wx:else class="avatar avatar-default">{{item.name[0]}}</view>
+        <view class="flex-1 ml">
+          <view class="font-bold text-lg">{{item.name}}</view>
+          <view class="text-sm text-gray mt-sm">{{item.subject || '未分类'}}</view>
+        </view>
+        <view class="lesson-info">
+          <view class="text-green font-bold text-lg">{{item.total_lessons - item.used_lessons}}</view>
+          <view class="text-sm text-gray">剩余课时</view>
+        </view>
+      </view>
+      <view class="progress mt">
+        <view class="progress-bar">
+          <view class="progress-inner" style="width: {{item.total_lessons ? (item.used_lessons / item.total_lessons * 100) : 0}}%"></view>
+        </view>
+        <view class="text-sm text-gray mt-sm">已用 {{item.used_lessons}} / 共 {{item.total_lessons}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bind-btn-bottom btn-ghost" wx:if="{{students.length > 0}}" bindtap="goBind">+ 绑定更多学生</view>
+
+  <!-- 今日课程 -->
+  <view class="page-title mt">今日课程</view>
+  <view wx:if="{{todaySchedules.length === 0}}" class="card empty">今日暂无课程</view>
+  <view class="card" wx:for="{{todaySchedules}}" wx:key="id">
+    <view class="flex items-center justify-between">
+      <view>
+        <view class="font-bold text-md">{{item.student_name}} - {{item.course_name}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.teacher_name}} 老师</view>
+      </view>
+      <view class="time-badge">{{item.time}}</view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="page-title mt">快捷入口</view>
+  <view class="card quick-entries">
+    <view class="quick-item" bindtap="goSchedule">
+      <view class="quick-icon" style="background:#dbeafe">📅</view>
+      <view class="text-sm">课程表</view>
+    </view>
+    <view class="quick-item" bindtap="goComments">
+      <view class="quick-icon" style="background:#fef3c7">💬</view>
+      <view class="text-sm">老师点评</view>
+    </view>
+    <view class="quick-item" bindtap="goBind">
+      <view class="quick-icon" style="background:#d1fae5">➕</view>
+      <view class="text-sm">绑定学生</view>
+    </view>
+  </view>
+</view>

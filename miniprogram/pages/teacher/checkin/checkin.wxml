@@ -1,0 +1,16 @@
+<!--pages/teacher/checkin/checkin.wxml-->
+<view class="container">
+  <view class="page-title">课时签到</view>
+  <view wx:if="{{schedules.length === 0 && !loading}}" class="card empty">暂无待签到课程</view>
+
+  <view class="card" wx:for="{{schedules}}" wx:key="id">
+    <view class="flex items-center justify-between">
+      <view class="flex-1">
+        <view class="font-bold text-md">{{item.student_name}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.course_name}}</view>
+        <view class="text-sm text-gray mt-sm">📅 {{item.date}} {{item.time}}</view>
+      </view>
+      <view class="btn-primary checkin-btn" bindtap="doCheckin" data-schedule="{{item}}">签到</view>
+    </view>
+  </view>
+</view>

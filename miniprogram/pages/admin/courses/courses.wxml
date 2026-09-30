@@ -1,0 +1,44 @@
+<!--pages/admin/courses/courses.wxml-->
+<view class="container">
+  <view class="flex items-center justify-between">
+    <view class="page-title">课程管理</view>
+    <view class="btn-primary add-btn" bindtap="showAdd">+ 新增</view>
+  </view>
+
+  <view wx:if="{{courses.length === 0 && !loading}}" class="card empty">暂无课程</view>
+  <view class="card" wx:for="{{courses}}" wx:key="id">
+    <view class="flex items-center justify-between">
+      <view class="flex-1">
+        <view class="font-bold text-md">{{item.name}}</view>
+        <view wx:if="{{item.description}}" class="text-sm text-gray mt-sm">{{item.description}}</view>
+        <view class="text-sm text-gray-light mt-sm">时长：{{item.duration}} 分钟</view>
+      </view>
+    </view>
+    <view class="actions mt">
+      <view class="btn-ghost action-btn" bindtap="showEdit" data-course="{{item}}">编辑</view>
+      <view class="btn-ghost action-btn danger" bindtap="del" data-course="{{item}}">删除</view>
+    </view>
+  </view>
+</view>
+
+<view wx:if="{{showForm}}" class="modal-mask" bindtap="hideForm">
+  <view class="modal" catchtap="">
+    <view class="modal-title">{{editingId ? '编辑课程' : '新增课程'}}</view>
+    <view class="form-item">
+      <view class="label">课程名 *</view>
+      <input class="input" value="{{form.name}}" data-field="name" bindinput="onInput" />
+    </view>
+    <view class="form-item">
+      <view class="label">描述</view>
+      <textarea class="input" value="{{form.description}}" data-field="description" bindinput="onInput"></textarea>
+    </view>
+    <view class="form-item">
+      <view class="label">时长（分钟）</view>
+      <input class="input" value="{{form.duration}}" data-field="duration" bindinput="onInput" type="number" />
+    </view>
+    <view class="modal-actions">
+      <button class="btn-ghost" bindtap="hideForm">取消</button>
+      <button class="btn-primary" bindtap="submit">保存</button>
+    </view>
+  </view>
+</view>

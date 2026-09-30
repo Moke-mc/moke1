@@ -1,0 +1,19 @@
+/* pages/parent/bind/bind.wxss */
+.form-item {
+  margin-bottom: 24rpx;
+}
+.form-item .label {
+  font-size: 26rpx;
+  color: #374151;
+  margin-bottom: 12rpx;
+}
+.required {
+  color: #ef4444;
+}
+.tips {
+  margin-top: 40rpx;
+  padding: 24rpx;
+  background: #fff;
+  border-radius: 12rpx;
+  line-height: 1.6;
+}

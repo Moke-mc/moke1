@@ -1,0 +1,81 @@
+<!--pages/admin/students/students.wxml-->
+<view class="container">
+  <view class="flex items-center justify-between">
+    <view class="page-title">学员管理</view>
+    <view class="btn-primary add-btn" bindtap="showAdd">+ 新增</view>
+  </view>
+
+  <view wx:if="{{students.length === 0 && !loading}}" class="card empty">暂无学员</view>
+  <view class="card student-item" wx:for="{{students}}" wx:key="id">
+    <view class="flex items-center">
+      <image wx:if="{{item.photo}}" src="{{item.photo}}" class="avatar" mode="aspectFill"></image>
+      <view wx:else class="avatar avatar-default">{{item.name[0]}}</view>
+      <view class="flex-1 ml">
+        <view class="font-bold text-md">{{item.name}}</view>
+        <view class="text-sm text-gray mt-sm">{{item.phone}}</view>
+        <view class="text-sm text-gray-light mt-sm">
+          家长：{{item.parent_name}} · 课时 {{item.used_lessons}}/{{item.total_lessons}}
+        </view>
+      </view>
+    </view>
+    <view class="actions mt">
+      <view class="btn-ghost action-btn" bindtap="showEdit" data-student="{{item}}">编辑</view>
+      <view class="btn-ghost action-btn danger" bindtap="del" data-student="{{item}}">删除</view>
+    </view>
+  </view>
+</view>
+
+<!--表单弹层-->
+<view wx:if="{{showForm}}" class="modal-mask" bindtap="hideForm">
+  <view class="modal" catchtap="">
+    <view class="modal-title">{{editingId ? '编辑学员' : '新增学员'}}</view>
+    <scroll-view scroll-y class="form-scroll">
+      <view class="form-item">
+        <view class="label">学员姓名 *</view>
+        <input class="input" value="{{form.name}}" data-field="name" bindinput="onInput" />
+      </view>
+      <view class="form-item">
+        <view class="label">学员手机号 *</view>
+        <input class="input" value="{{form.phone}}" data-field="phone" bindinput="onInput" type="number" maxlength="11" />
+      </view>
+      <view class="form-item">
+        <view class="label">科目</view>
+        <input class="input" value="{{form.subject}}" data-field="subject" bindinput="onInput" />
+      </view>
+      <view class="form-item">
+        <view class="label">总课时</view>
+        <input class="input" value="{{form.totalLessons}}" data-field="totalLessons" bindinput="onInput" type="number" />
+      </view>
+      <block wx:if="{{!editingId}}">
+        <view class="section-divider">家长账号（新增学员时必填）</view>
+        <view class="form-item">
+          <view class="label">家长姓名 *</view>
+          <input class="input" value="{{form.parentName}}" data-field="parentName" bindinput="onInput" />
+        </view>
+        <view class="form-item">
+          <view class="label">家长手机号 *</view>
+          <input class="input" value="{{form.parentPhone}}" data-field="parentPhone" bindinput="onInput" type="number" maxlength="11" />
+        </view>
+        <view class="form-item">
+          <view class="label">家长登录用户名</view>
+          <input class="input" value="{{form.parentUsername}}" data-field="parentUsername" bindinput="onInput" placeholder="留空自动生成" />
+        </view>
+        <view class="form-item">
+          <view class="label">家长登录密码</view>
+          <input class="input" value="{{form.parentPassword}}" data-field="parentPassword" bindinput="onInput" placeholder="留空默认 123456" />
+        </view>
+      </block>
+      <block wx:else>
+        <view class="section-divider">家长账号（可选修改）</view>
+        <view class="form-item">
+          <view class="label">家长登录用户名</view>
+          <input class="input" value="{{form.parentUsername}}" data-field="parentUsername" bindinput="onInput" />
+        </view>
+      </block>
+    </scroll-view>
+    <view class="modal-actions">
+      <button class="btn-ghost" bindtap="hideForm">取消</button>
+      <button class="btn-primary" bindtap="submit">保存</button>
+    </view>
+  </view>
+</view>

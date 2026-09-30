@@ -1,0 +1,134 @@
+/* app.wxss - 全局样式 */
+page {
+  background-color: #f5f5f5;
+  color: #333;
+  font-size: 28rpx;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+view, text {
+  box-sizing: border-box;
+}
+
+.container {
+  padding: 24rpx;
+}
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+}
+
+/* 标题 */
+.page-title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 16rpx;
+}
+
+/* 按钮 */
+.btn-primary {
+  background: #10b981;
+  color: #fff;
+  border-radius: 12rpx;
+  padding: 20rpx 32rpx;
+  font-size: 30rpx;
+  text-align: center;
+  border: none;
+}
+
+.btn-primary[disabled] {
+  background: #d1d5db;
+  color: #fff;
+}
+
+.btn-ghost {
+  background: #fff;
+  color: #10b981;
+  border: 2rpx solid #10b981;
+  border-radius: 12rpx;
+  padding: 18rpx 32rpx;
+  font-size: 30rpx;
+  text-align: center;
+}
+
+/* 输入框 */
+.input {
+  background: #f9fafb;
+  border: 2rpx solid #e5e7eb;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 28rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #10b981;
+}
+
+/* 标签 */
+.tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.tag-orange {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.tag-gray {
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+/* 空状态 */
+.empty {
+  text-align: center;
+  color: #9ca3af;
+  padding: 60rpx 0;
+  font-size: 28rpx;
+}
+
+/* flex 工具类 */
+.flex { display: flex; }
+.flex-row { flex-direction: row; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.flex-1 { flex: 1; }
+.gap-sm { gap: 12rpx; }
+.gap { gap: 24rpx; }
+
+.text-gray { color: #6b7280; }
+.text-gray-light { color: #9ca3af; }
+.text-green { color: #10b981; }
+.text-orange { color: #f97316; }
+.text-red { color: #ef4444; }
+.text-sm { font-size: 24rpx; }
+.text-md { font-size: 28rpx; }
+.text-lg { font-size: 32rpx; }
+.text-xl { font-size: 36rpx; }
+.font-bold { font-weight: 600; }
+.mt-sm { margin-top: 12rpx; }
+.mt { margin-top: 24rpx; }
+.mb-sm { margin-bottom: 12rpx; }
+.mb { margin-bottom: 24rpx; }

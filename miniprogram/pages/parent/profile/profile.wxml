@@ -1,0 +1,110 @@
+<!--pages/parent/profile/profile.wxml-->
+<view class="container">
+  <view wx:if="{{!student && loading}}" class="empty">加载中...</view>
+
+  <block wx:if="{{student}}">
+    <view class="flex items-center justify-between">
+      <view class="page-title">{{student.name}} 的档案</view>
+      <view wx:if="{{!editing}}" class="btn-ghost edit-btn" bindtap="toggleEdit">编辑</view>
+    </view>
+
+    <!-- 查看模式 -->
+    <block wx:if="{{!editing}}">
+      <view class="card profile-card">
+        <image wx:if="{{student.photo}}" src="{{student.photo}}" class="profile-photo" mode="aspectFill"></image>
+        <view wx:else class="profile-photo profile-photo-default">{{student.name[0]}}</view>
+        <view class="info-list mt">
+          <view class="info-row"><text class="info-label">性别</text><text class="info-value">{{student.gender || '未填写'}}</text></view>
+          <view class="info-row"><text class="info-label">出生日期</text><text class="info-value">{{student.birth_date || '未填写'}}</text></view>
+          <view class="info-row"><text class="info-label">学校</text><text class="info-value">{{student.school || '未填写'}}</text></view>
+          <view class="info-row"><text class="info-label">年级</text><text class="info-value">{{student.grade || '未填写'}}</text></view>
+          <view class="info-row"><text class="info-label">地址</text><text class="info-value">{{student.address || '未填写'}}</text></view>
+          <view class="info-row"><text class="info-label">科目</text><text class="info-value">{{student.subject || '未填写'}}</text></view>
+          <view class="info-row"><text class="info-label">课时</text><text class="info-value">{{student.used_lessons}}/{{student.total_lessons}}</text></view>
+        </view>
+      </view>
+
+      <view class="page-title mt">比赛经历</view>
+      <view wx:if="{{editData.competitionExperiences.length === 0}}" class="card empty">暂无比赛经历</view>
+      <view class="card" wx:for="{{editData.competitionExperiences}}" wx:key="index">
+        <view class="font-bold text-md">{{item.name}}</view>
+        <view class="text-sm text-gray mt-sm">📅 {{item.date}}</view>
+        <view wx:if="{{item.result}}" class="tag tag-orange mt-sm">成绩：{{item.result}}</view>
+        <view wx:if="{{item.description}}" class="text-sm text-gray mt">{{item.description}}</view>
+      </view>
+    </block>
+
+    <!-- 编辑模式 -->
+    <block wx:if="{{editing}}">
+      <view class="card">
+        <view class="section-title">学生照片</view>
+        <view class="flex items-center gap">
+          <image wx:if="{{editData.photo}}" src="{{editData.photo}}" class="profile-photo-edit" mode="aspectFill"></image>
+          <view wx:else class="profile-photo-edit profile-photo-default">无</view>
+          <view class="flex-1">
+            <button class="btn-ghost" bindtap="choosePhoto">选择照片</button>
+            <view wx:if="{{editData.photo}}" class="text-red text-sm mt-sm remove-link" bindtap="removePhoto">移除照片</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">个人信息</view>
+        <view class="form-item">
+          <view class="label">性别</view>
+          <radio-group bindchange="onGenderChange">
+            <label class="radio-label"><radio value="0" checked="{{editData.gender === '男'}}" />男</label>
+            <label class="radio-label"><radio value="1" checked="{{editData.gender === '女'}}" />女</label>
+          </radio-group>
+        </view>
+        <view class="form-item">
+          <view class="label">出生日期</view>
+          <picker mode="date" value="{{editData.birthDate}}" bindchange="onDateChange">
+            <view class="input picker">{{editData.birthDate || '请选择日期'}}</view>
+          </picker>
+        </view>
+        <view class="form-item">
+          <view class="label">学校</view>
+          <input class="input" value="{{editData.school}}" data-field="school" bindinput="onInput" />
+        </view>
+        <view class="form-item">
+          <view class="label">年级</view>
+          <input class="input" value="{{editData.grade}}" data-field="grade" bindinput="onInput" />
+        </view>
+        <view class="form-item">
+          <view class="label">地址</view>
+          <input class="input" value="{{editData.address}}" data-field="address" bindinput="onInput" />
+        </view>
+      </view>
+
+      <view class="card">
+        <view class="section-title">比赛经历</view>
+        <view class="exp-list">
+          <view class="exp-item" wx:for="{{editData.competitionExperiences}}" wx:key="index">
+            <view class="flex items-center justify-between">
+              <view class="font-bold text-md">{{item.name}}</view>
+              <view class="text-red text-sm" bindtap="removeExp" data-idx="{{index}}">删除</view>
+            </view>
+            <view class="text-sm text-gray mt-sm">{{item.date}} · {{item.result}}</view>
+            <view wx:if="{{item.description}}" class="text-sm text-gray mt-sm">{{item.description}}</view>
+          </view>
+          <view wx:if="{{editData.competitionExperiences.length === 0}}" class="empty">暂无比赛经历，请添加</view>
+        </view>
+
+        <view class="add-exp-box mt">
+          <view class="text-md font-bold mb">添加比赛</view>
+          <input class="input mt-sm" placeholder="比赛名称" value="{{newExp.name}}" data-field="name" bindinput="onExpInput" />
+          <input class="input mt-sm" placeholder="日期（如 2025-03-15）" value="{{newExp.date}}" data-field="date" bindinput="onExpInput" />
+          <input class="input mt-sm" placeholder="成绩（如 一等奖）" value="{{newExp.result}}" data-field="result" bindinput="onExpInput" />
+          <textarea class="input mt-sm" placeholder="详细描述" value="{{newExp.description}}" data-field="description" bindinput="onExpInput"></textarea>
+          <button class="btn-ghost mt" bindtap="addExp">添加</button>
+        </view>
+      </view>
+
+      <view class="actions">
+        <button class="btn-ghost" bindtap="toggleEdit">取消</button>
+        <button class="btn-primary" bindtap="save">保存</button>
+      </view>
+    </block>
+  </block>
+</view>

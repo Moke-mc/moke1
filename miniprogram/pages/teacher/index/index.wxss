@@ -1,0 +1,52 @@
+/* pages/teacher/index/index.wxss */
+.header {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  padding: 40rpx 32rpx 60rpx;
+  border-radius: 0 0 32rpx 32rpx;
+  margin: -24rpx -24rpx 24rpx;
+}
+.logout {
+  color: rgba(255,255,255,0.9);
+  font-size: 26rpx;
+  background: rgba(255,255,255,0.2);
+  padding: 8rpx 24rpx;
+  border-radius: 20rpx;
+}
+.stats {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 32rpx 0;
+  margin-bottom: 24rpx;
+}
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+.num {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #1f2937;
+}
+.quick-entries {
+  display: flex;
+  justify-content: space-around;
+}
+.quick-item {
+  text-align: center;
+}
+.quick-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48rpx;
+  margin-bottom: 12rpx;
+}
+.status-tag {
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 22rpx;
+}

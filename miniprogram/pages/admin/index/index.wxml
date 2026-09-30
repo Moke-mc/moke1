@@ -1,0 +1,71 @@
+<!--pages/admin/index/index.wxml-->
+<view class="container">
+  <view class="header">
+    <view class="flex items-center justify-between">
+      <view>
+        <view class="text-lg text-gray-light">管理后台</view>
+        <view class="text-sm text-gray-light">{{user.name || '管理员'}}</view>
+      </view>
+      <view class="logout" bindtap="logout">退出</view>
+    </view>
+  </view>
+
+  <view class="stats-grid">
+    <view class="stat-card">
+      <view class="num">{{stats.teacherCount || 0}}</view>
+      <view class="text-sm text-gray">教师</view>
+    </view>
+    <view class="stat-card">
+      <view class="num">{{stats.studentCount || 0}}</view>
+      <view class="text-sm text-gray">学员</view>
+    </view>
+    <view class="stat-card">
+      <view class="num">{{stats.courseCount || 0}}</view>
+      <view class="text-sm text-gray">课程</view>
+    </view>
+    <view class="stat-card">
+      <view class="num">{{stats.lessonCount || 0}}</view>
+      <view class="text-sm text-gray">课时记录</view>
+    </view>
+    <view class="stat-card full">
+      <view class="num text-orange">{{stats.todayLessons || 0}}</view>
+      <view class="text-sm text-gray">今日排课</view>
+    </view>
+  </view>
+
+  <view class="page-title">功能导航</view>
+  <view class="menu">
+    <view class="menu-item" bindtap="go" data-url="/pages/admin/students/students">
+      <view class="menu-icon" style="background:#dbeafe">👥</view>
+      <view class="flex-1">
+        <view class="font-bold text-md">学员管理</view>
+        <view class="text-sm text-gray">添加、编辑学员</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+    <view class="menu-item" bindtap="go" data-url="/pages/admin/teachers/teachers">
+      <view class="menu-icon" style="background:#d1fae5">👨‍🏫</view>
+      <view class="flex-1">
+        <view class="font-bold text-md">教师管理</view>
+        <view class="text-sm text-gray">教师账号</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+    <view class="menu-item" bindtap="go" data-url="/pages/admin/courses/courses">
+      <view class="menu-icon" style="background:#fef3c7">📚</view>
+      <view class="flex-1">
+        <view class="font-bold text-md">课程管理</view>
+        <view class="text-sm text-gray">课程分类</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+    <view class="menu-item" bindtap="go" data-url="/pages/admin/schedules/schedules">
+      <view class="menu-icon" style="background:#fce7f3">📅</view>
+      <view class="flex-1">
+        <view class="font-bold text-md">排课管理</view>
+        <view class="text-sm text-gray">学员 + 教师 + 时间</view>
+      </view>
+      <view class="arrow">›</view>
+    </view>
+  </view>
+</view>
